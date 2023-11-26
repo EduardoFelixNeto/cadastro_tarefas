@@ -11,20 +11,38 @@ import { Router } from '@angular/router';
 })
 export class InserirTarefaComponent implements OnInit {
 
-  @ViewChild('formTarefa') formTarefa! : NgForm;
-  tarefa! : Tarefa;
-  
-  constructor(private tarefaService: TarefaService, private router: Router){}
+  @ViewChild('formTarefa') formTarefa!: NgForm;
+  tarefa!: Tarefa;
+  mensagem = ''
+
+  constructor(private tarefaService: TarefaService, private router: Router) { }
 
   ngOnInit(): void {
-      this.tarefa = new Tarefa();
+    this.tarefa = new Tarefa();
   }
 
   inserir(): void {
-    if (this.formTarefa.form.valid){
-      this.tarefa.custo = this.limparFormatacao(this.tarefa.custo!.toString())
-      this.tarefaService.inserir(this.tarefa);
-      this.router.navigate(["/tarefas"])
+    if (this.formTarefa.form.valid) {
+      this.tarefaService.listarTodos().subscribe(todasTarefas => {
+        if (todasTarefas.some(tarefa => tarefa.nome === this.tarefa.nome)) {
+          this.mensagem = 'Tarefa já registrada!';
+          return;
+        }
+
+        const maxId = Math.max(...todasTarefas.filter(tarefa => tarefa.tarefaId !== undefined).map(tarefa => tarefa.tarefaId!));
+        const maxOrdem = Math.max(...todasTarefas.filter(tarefa => tarefa.ordemApresentacao !== undefined).map(tarefa => tarefa.ordemApresentacao!));
+        const resultadoFinal = maxOrdem === -Infinity ? 0 : maxOrdem;
+        const novaTarefa: Tarefa = {
+          nome: this.tarefa.nome,
+          custo: this.tarefa.custo = this.limparFormatacao(this.tarefa.custo!.toString()),
+          dataLimite: this.tarefa.dataLimite,
+          ordemApresentacao: resultadoFinal + 1
+        };
+        console.log(novaTarefa);
+        this.tarefaService.inserir(novaTarefa).subscribe((response: Tarefa) => {
+          this.router.navigate(["/tarefas"]);
+        });
+      });
     }
   }
 

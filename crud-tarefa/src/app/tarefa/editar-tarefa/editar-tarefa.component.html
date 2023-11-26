@@ -11,7 +11,7 @@
         </div>
         <div class="form-group">
             <label for="custo">Custo:</label>
-            <input [(ngModel)]="tarefa.custo" appCurrencyMask #custo="ngModel" type="text" class="form-control" id="custo" name="custo"
+            <input [(ngModel)]="custoFormatado" appCurrencyMask #custo="ngModel" type="text" class="form-control" id="custo" name="custo"
                 required>
             <div *ngIf="custo.errors && (custo.dirty || custo.touched)" class="alert alert-danger">
                 <div [hidden]="!custo.errors?.['required']"> Digite o custo da tarefa. </div>

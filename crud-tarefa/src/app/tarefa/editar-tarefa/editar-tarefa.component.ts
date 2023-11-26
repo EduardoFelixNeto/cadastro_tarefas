@@ -13,23 +13,49 @@ export class EditarTarefaComponent implements OnInit {
 
   @ViewChild("formTarefa") formTarefa!: NgForm;
   tarefa!: Tarefa;
+  mensagem = ''
+  private _custoFormatado: string = '';
 
   constructor(private tarefaService: TarefaService, private route: ActivatedRoute, private router: Router) { }
+
+  get custoFormatado(): string {
+    return this._custoFormatado;
+  }
+
+  set custoFormatado(valor: string) {
+    this._custoFormatado = valor;
+    this.tarefa.custo = this.desformatarValor(valor);
+  }
+
+  private desformatarValor(valorFormatado: string): number {
+    const valorLimpo = valorFormatado.replace(/[R$\.,]/g, '');
+    return valorLimpo ? parseFloat(valorLimpo) / 100 : 0;
+  }
 
   ngOnInit(): void {
     let id = +this.route.snapshot.params['id'];
     const res = this.tarefaService.buscarPorId(id);
     if (res !== undefined)
-      this.tarefa = res;
-    else
-      throw new Error("Tarefa não encontrada: id = " + id);
+      res.subscribe(dado => {
+        this.tarefa = dado;
+        if (this.tarefa.custo !== undefined && this.tarefa.custo !== null) {
+          this.custoFormatado = this.formatarComoMoeda(this.tarefa.custo);
+        }
+      }, error => {
+        console.error('Tarefa não encontrada: id = ' + id, error);
+      });
   }
 
   atualizar(): void {
     if (this.formTarefa.form.valid) {
-      this.tarefa.custo = this.limparFormatacao(this.tarefa.custo!.toString())
-      this.tarefaService.atualizar(this.tarefa);
-      this.router.navigate(['/tarefas']);
+      this.tarefaService.atualizar(this.tarefa).subscribe(
+        response => {
+          console.log(this.tarefa)
+          this.router.navigate(['/tarefas']);
+        }, error => {
+          console.error('Erro ao atualizar a tarefa', error);
+          this.mensagem = 'Erro ao atualizar a tarefa.';
+        });
     }
   }
 
@@ -37,5 +63,9 @@ export class EditarTarefaComponent implements OnInit {
     if (!valorFormatado) return 0;
     const valorNumerico = valorFormatado.replace(/[R$\.,]/g, '').trim();
     return parseFloat(valorNumerico) / 100;
+  }
+
+  formatarComoMoeda(valorNumerico: number): string {
+    return `R$ ${valorNumerico.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
   }
 }

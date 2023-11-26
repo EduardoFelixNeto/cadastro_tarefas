@@ -15,19 +15,20 @@ export class ListarTarefaComponent implements OnInit {
   constructor(private tarefaService: TarefaService){}
 
   ngOnInit(): void {
-    this.tarefas = this.listarTodos();
-    console.log(this.tarefas)
+    this.tarefaService.listarTodos().subscribe(dados => {
+      this.tarefas = dados;
+      console.log(this.tarefas)
+    }, error => {
+      console.error('Erro ao buscar as tarefas', error);
+      console.log(this.tarefas)
+    });
   }
 
-  listarTodos(): Tarefa[] {
-    return this.tarefaService.listarTodos();
-  }
-
-  remover($event: any, tarefa: Tarefa): void {
-    $event.preventDefault();
-    if (confirm(`Deseja realmente remover a tarefa ${tarefa.nome}?`)) {
-    this.tarefaService.remover(tarefa.tarefaId!);
-    this.tarefas = this.listarTodos();
-    }
+  remover(tarefa: Tarefa): void{
+    this.tarefaService.remover(tarefa.tarefaId!).subscribe(()=>{
+      this.tarefas = this.tarefas.filter(tarefa => tarefa.tarefaId !== tarefa.tarefaId);
+    }, error => {
+      console.error(`Erro ao tentar deletar o item de id ${tarefa.tarefaId}`, error);
+    });
   }
 }
