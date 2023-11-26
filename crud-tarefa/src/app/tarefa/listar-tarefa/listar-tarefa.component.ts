@@ -35,10 +35,28 @@ export class ListarTarefaComponent implements OnInit {
   }
 
   moverParaCima(tarefa: Tarefa): void {
-
+    const index = this.tarefas.indexOf(tarefa);
+    if (index > 0) {
+      [this.tarefas[index].ordemApresentacao, this.tarefas[index - 1].ordemApresentacao] =
+        [this.tarefas[index - 1].ordemApresentacao, this.tarefas[index].ordemApresentacao];
+      [this.tarefas[index], this.tarefas[index - 1]] = [this.tarefas[index - 1], this.tarefas[index]];
+      this.atualizarOrdemNoBackend(this.tarefas[index]);
+      this.atualizarOrdemNoBackend(this.tarefas[index - 1]);
+    }
   }
 
   moverParaBaixo(tarefa: Tarefa): void {
+    const index = this.tarefas.indexOf(tarefa);
+    if (index < this.tarefas.length - 1) {
+      [this.tarefas[index].ordemApresentacao, this.tarefas[index + 1].ordemApresentacao] =
+        [this.tarefas[index + 1].ordemApresentacao, this.tarefas[index].ordemApresentacao];
+      [this.tarefas[index], this.tarefas[index + 1]] = [this.tarefas[index + 1], this.tarefas[index]];
+      this.atualizarOrdemNoBackend(this.tarefas[index]);
+      this.atualizarOrdemNoBackend(this.tarefas[index + 1]);
+    }
+  }
 
+  atualizarOrdemNoBackend(tarefa: Tarefa): void {
+    this.tarefaService.atualizar(tarefa).subscribe();
   }
 }
