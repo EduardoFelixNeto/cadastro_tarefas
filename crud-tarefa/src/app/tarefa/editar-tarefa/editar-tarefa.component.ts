@@ -48,14 +48,20 @@ export class EditarTarefaComponent implements OnInit {
 
   atualizar(): void {
     if (this.formTarefa.form.valid) {
-      this.tarefaService.atualizar(this.tarefa).subscribe(
-        response => {
-          console.log(this.tarefa)
-          this.router.navigate(['/tarefas']);
-        }, error => {
-          console.error('Erro ao atualizar a tarefa', error);
-          this.mensagem = 'Erro ao atualizar a tarefa.';
-        });
+      this.tarefaService.listarTodos().subscribe(todasTarefas => {
+        if (todasTarefas.some(tarefa => tarefa.nome === this.tarefa.nome)) {
+          this.mensagem = 'Tarefa já registrada!';
+          return;
+        }
+        this.tarefaService.atualizar(this.tarefa).subscribe(
+          response => {
+            console.log(this.tarefa)
+            this.router.navigate(['/tarefas']);
+          }, error => {
+            console.error('Erro ao atualizar a tarefa', error);
+            this.mensagem = 'Erro ao atualizar a tarefa.';
+          });
+      });
     }
   }
 

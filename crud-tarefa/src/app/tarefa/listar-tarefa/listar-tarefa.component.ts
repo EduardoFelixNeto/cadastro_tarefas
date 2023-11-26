@@ -11,8 +11,8 @@ import { Tarefa } from 'src/app/shared/models/tarefa.model';
 export class ListarTarefaComponent implements OnInit {
 
   tarefas: Tarefa[] = [];
-  
-  constructor(private tarefaService: TarefaService){}
+
+  constructor(private tarefaService: TarefaService) { }
 
   ngOnInit(): void {
     this.tarefaService.listarTodos().subscribe(dados => {
@@ -24,11 +24,21 @@ export class ListarTarefaComponent implements OnInit {
     });
   }
 
-  remover(tarefa: Tarefa): void{
-    this.tarefaService.remover(tarefa.tarefaId!).subscribe(()=>{
-      this.tarefas = this.tarefas.filter(tarefa => tarefa.tarefaId !== tarefa.tarefaId);
-    }, error => {
-      console.error(`Erro ao tentar deletar o item de id ${tarefa.tarefaId}`, error);
-    });
+  remover($event: any, tarefa: Tarefa): void {
+    if (confirm(`Deseja realmente remover a tarefa abaixo?\n\n ${tarefa.nome}`)) {
+      this.tarefaService.remover(tarefa.tarefaId!).subscribe(() => {
+        this.tarefas = this.tarefas.filter(tarefa => tarefa.tarefaId !== tarefa.tarefaId);
+      }, error => {
+        console.error(`Erro ao tentar deletar o item de id ${tarefa.tarefaId}`, error);
+      });
+    }
+  }
+
+  moverParaCima(tarefa: Tarefa): void {
+
+  }
+
+  moverParaBaixo(tarefa: Tarefa): void {
+
   }
 }
