@@ -22,9 +22,16 @@ export class InserirTarefaComponent implements OnInit {
 
   inserir(): void {
     if (this.formTarefa.form.valid){
+      this.tarefa.custo = this.limparFormatacao(this.tarefa.custo!.toString())
       this.tarefaService.inserir(this.tarefa);
       this.router.navigate(["/tarefas"])
     }
+  }
+
+  limparFormatacao(valorFormatado: string): number {
+    if (!valorFormatado) return 0;
+    const valorNumerico = valorFormatado.replace(/[R$\.,]/g, '').trim();
+    return parseFloat(valorNumerico) / 100;
   }
 
 }

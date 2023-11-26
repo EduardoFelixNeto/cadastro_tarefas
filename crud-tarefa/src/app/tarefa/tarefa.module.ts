@@ -8,6 +8,7 @@ import { TarefaService } from './services/tarefa.service';
 import { ListarTarefaComponent } from './listar-tarefa/listar-tarefa.component';
 import { InserirTarefaComponent } from './inserir-tarefa/inserir-tarefa.component';
 import { EditarTarefaComponent } from './editar-tarefa/editar-tarefa.component';
+import { CurrencyMaskDirective } from '../shared/directives/currency-mask.directive';
 
 
 
@@ -15,7 +16,8 @@ import { EditarTarefaComponent } from './editar-tarefa/editar-tarefa.component';
   declarations: [
     ListarTarefaComponent,
     InserirTarefaComponent,
-    EditarTarefaComponent
+    EditarTarefaComponent,
+    CurrencyMaskDirective
   ],
   imports: [
     CommonModule,
