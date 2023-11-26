@@ -11,7 +11,7 @@
                 </a>
             </th>
         </tr>
-        <tr *ngFor="let tarefa of tarefas">
+        <tr *ngFor="let tarefa of tarefas" [ngClass]="{'destaque-custo-alto': tarefa.custo! >= 1000}">
             <td>{{tarefa.nome}}</td>
             <td>{{ tarefa.custo | currency:'BRL':'symbol-narrow' }}</td>
             <td>{{tarefa.dataLimite | date:'dd/MM/yyyy'}}</td>
