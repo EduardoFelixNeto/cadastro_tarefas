@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class TarefaService {
 
-  private apiUrl = 'http://localhost:8080/';
+  private apiUrl = 'https://aw-tarefas-api-caab5d3e89a7.herokuapp.com/';
 
   constructor(private http: HttpClient) { }
 
